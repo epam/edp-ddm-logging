@@ -1,0 +1,72 @@
+kind: DaemonSet
+apiVersion: apps/v1
+metadata:
+  annotations:
+    deprecated.daemonset.template.generation: '2'
+    openshift.io/scc: node-exporter
+  name: localtime-fixer
+  namespace: default
+  labels:
+    app: localtime-fixer
+spec:
+  selector:
+    matchLabels:
+      app: localtime-fixer
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: localtime-fixer
+      annotations:
+        sheduler.alpha.kubernetes.io/critical-pod: ''
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+      securityContext: {}
+      containers:
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: fixer
+          command:
+            - /bin/ash
+            - '-c'
+            - |
+              if [ -d /host/etc/localtime ]; then
+                rm -rf /host/etc/localtime
+              fi
+              if [ ! -h /host/etc/localtime ]; then
+                ln -fvs /usr/share/zoneinfo/UTC /host/etc/localtime
+              fi
+              ls -lah /host/etc/localtime
+              exec /bin/sleep infinity
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: etc
+              mountPath: /host/etc
+          terminationMessagePolicy: File
+          image: 'alpine:3.12'
+      volumes:
+        - name: etc
+          hostPath:
+            path: /etc
+            type: Directory
+      dnsPolicy: ClusterFirst
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          operator: Exists
+          effect: NoSchedule
+        - key: node.kubernetes.io/disk-pressure
+          operator: Exists
+          effect: NoSchedule
+  updateStrategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+  revisionHistoryLimit: 10
+

@@ -1,0 +1,57 @@
+helmDefaults:
+ wait: true
+ timeout: 600
+
+missingFileHandler: Error
+
+releases:
+  - name: logging-nodes
+    namespace: openshift-logging
+    chart: logging-nodes
+    missingFileHandler: Warn
+    wait: true
+    values:
+      - "values.yaml"
+      - "values.gotmpl"
+  - name: logging-operator
+    namespace: openshift-logging
+    missingFileHandler: Warn
+    chart: logging-operator
+    values:
+      - "values.yaml"
+      - "values.gotmpl"
+    needs:
+      - openshift-operators-redhat/elasticsearch
+
+  - name: elasticsearch
+    namespace: openshift-operators-redhat
+    missingFileHandler: Warn
+    chart: elasticsearch
+    values:
+      - "values.yaml"
+      - "values.gotmpl"
+    needs:
+      - openshift-logging/logging-nodes
+
+  - name: logging-instance
+    namespace: openshift-logging
+    chart: logging-instance
+    missingFileHandler: Warn
+    values:
+      - "values.yaml"
+      - "values.gotmpl"
+    needs:
+      - openshift-operators-redhat/elasticsearch
+      - openshift-logging/logging-operator
+    hooks:
+      - events: [ "postsync" ]
+        showlogs: true
+        command: "bash"
+        args: ["../scripts/configure_fluentd.sh"]
+      - events: [ "postsync" ]
+        showlogs: true
+        command: "bash"
+        args: ["../scripts/set_labels_ns.sh"]
+
+
+
