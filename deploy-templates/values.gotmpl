@@ -1,0 +1,7 @@
+{{ $cloudProvider := exec "oc" (list "get" "infrastructure" "cluster" "--no-headers" "-o" "jsonpath='{.status.platform}'") }}
+cloudProvider: {{ $cloudProvider }}
+cluster_prefix: {{ exec "oc" (list "get" "infrastructure" "cluster" "--no-headers" "-o" "jsonpath='{.status.infrastructureName}'") }}
+cluster_zones: {{ "" | regexReplaceAll "'" (exec "oc" (list "get" "machine" "-n" "openshift-machine-api" "-l" "machine.openshift.io/cluster-api-machine-role=master" "--no-headers" "-o" "jsonpath='{.items[*].metadata.labels.machine\\.openshift\\.io/zone}'")) | splitList " " | uniq }}
+
+global:
+  storageClass: {{ if eq $cloudProvider "AWS" }}"gp2"{{ else }}{{ env "platformStorageClass" }}{{ end }}

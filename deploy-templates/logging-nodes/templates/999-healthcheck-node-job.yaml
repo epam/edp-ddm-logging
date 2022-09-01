@@ -1,0 +1,47 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  namespace: openshift-logging
+  annotations:
+   "helm.sh/hook": post-install
+   "helm.sh/hook-delete-policy": hook-succeeded,hook-failed
+  name: healthcheck-nodes
+spec:
+  selector: {}
+  template:
+    metadata:
+      name: healthcheck-nodes
+    spec:
+     restartPolicy: Never
+     serviceAccountName: logging-node-healthcheck
+     containers:
+      - name: 'healthcheck'
+        image: 'quay.io/openshift/origin-cli:latest'
+        command: ["/scripts/check-nodes.sh"]
+        volumeMounts:
+         - name: check-nodes
+           mountPath: /scripts
+     volumes:
+      - name: check-nodes
+        configMap:
+         name: healthcheck-nodes
+         defaultMode: 0744
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: logging-node-healthcheck
+subjects:
+- kind: ServiceAccount
+  name: logging-node-healthcheck
+  namespace: openshift-logging
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: logging-node-healthcheck
+

@@ -1,0 +1,43 @@
+########################################################
+#                 logging-operator                     #
+########################################################
+logging_operator_channel: "stable"
+
+
+########################################################
+#                 elasticsearch                        #
+########################################################
+elasticsearch_channel: "stable"
+
+
+########################################################
+#                 logging-instance                     #
+########################################################
+
+
+########################################################
+#                 scaling                              #
+########################################################
+scaling_es_node_count: 3  # Elasticsearch node count. Values from 1 to 3, see limitations in README.md
+scaling_es_node_storage_size: 400G  # Elasticsearch node's storage size in Gb.
+
+
+########################################################
+#                  logging-fluentd                     #
+########################################################
+fluentd:
+ output_elasticsearch_host: "elasticsearch.openshift-logging.svc.cluster.local"
+ output_elasticsearch_port: "9200"
+ BUFFER_QUEUE_LIMIT: "256"
+ BUFFER_SIZE_LIMIT: "64m"
+ FILE_BUFFER_LIMIT: "768Mi"
+ resources_limit_memory: "736Mi"
+ resources_requests_cpu: "100m" 
+ resources_requests_memory: "736Mi"
+
+########################################################
+#                  logging-nodes                       #
+########################################################
+node_name_prefix: "logging"
+instance_count_per_region: "3"
+

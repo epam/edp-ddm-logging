@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: healthcheck-nodes
+  namespace: openshift-logging
+data:
+  check-nodes.sh: |-
+    #!/bin/bash
+    IFS='
+    '
+    for MACHINE in `oc get machine -n openshift-machine-api --no-headers -o custom-columns=":metadata.name" | grep {{ .Values.cluster_prefix }}-{{ .Values.node_name_prefix }}`; do
+        NODE='NA'
+        while [[ `oc get node -n openshift-machine-api --no-headers $NODE | grep Ready` == '' ]]; do
+                NODE=`oc get machine -n openshift-machine-api --no-headers $MACHINE -o jsonpath='{.status.nodeRef.name}'`
+                echo "Node $NODE (machine $MACHINE) is not ready, sleeping for 5 sec"
+                if [[ $NODE == '' ]]; then
+                 NODE='NA'
+                fi
+                sleep 5
+        done
+        echo "Provisioned node $NODE (machine $MACHINE)"
+    done
+
