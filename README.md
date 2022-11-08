@@ -24,3 +24,8 @@ Logging pipeline
 ## Обмеження
 1. В рамках використання Openshift Cluster Logging, конфігурація масштабування (scale-up, scale-down) кластера Elasticsearch можлива тільки для кількості нод від 1 до 3 (включно). Якщо встановити значення "nodeCount" більше 3-х, оператор перестає реагувати на зміну даного параметра конфігурації.
 2. В рамках використання Openshift Cluster Logging, змінити розмір сховища (volume) для ноди кластера Elasticsearch можливо тільки для нового інстансу ноди Elasticsearch, для поточних нод змінити розмір сховища (volume) немає можливості.
+
+### License
+
+The logging is Open Source software released under
+the [Apache 2.0 license](https://www.apache.org/licenses/LICENSE-2.0).
