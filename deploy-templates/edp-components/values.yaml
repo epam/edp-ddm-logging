@@ -1,0 +1,5 @@
+edpComponent:
+  displayName: "Веб-інтерфейс перегляду журналу подій Платформи (Kibana)"
+  description: "Доступ та відображення логів в платформі "
+  displayOrder: "1"
+  operationalZone: "platform-operational-zone"

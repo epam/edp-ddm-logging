@@ -52,6 +52,16 @@ releases:
         showlogs: true
         command: "bash"
         args: ["../scripts/set_labels_ns.sh"]
+  - name: logging-edp-components
+    namespace: control-plane
+    chart: edp-components
+    missingFileHandler: Warn
+    values:
+      - "values.yaml"
+      - "values.gotmpl"
+    needs:
+      - openshift-operators-redhat/elasticsearch
+      - openshift-logging/logging-operator
 
 
 
