@@ -4,18 +4,51 @@ metadata:
   name: instance
   namespace: openshift-logging
 spec:
-  outputDefaults:
-    elasticsearch:
-      structuredTypeKey: kubernetes.namespace_name
+  inputs:
+    - name: json
+      application:
+        selector:
+          matchLabels:
+            collect.logs: json
+    - name: plain-text
+      application:
+        selector:
+          matchLabels:
+            collect.logs: plain-text
+    - name: platform-legacy
+      application:
+        namespaces:
+          - control-plane
+          - control-plane-nexus
+          - default
+          - documentation
+          - external-integration-mocks
+          - grafana-monitoring
+          - group-sync-operator
+          - istio-operator
+          - istio-system
+          - kafka-operator
+          - postgres-operator
+          - redis-operator
+          - smtp-server
+          - user-management
+          - velero
+  outputs:
+    - elasticsearch:
+        structuredTypeKey: kubernetes.namespace_name
+      name: default
+      type: elasticsearch
   pipelines:
     - name: application-logs
       inputRefs:
-        - application
+        - json
       outputRefs:
         - default
       parse: json
-    - name: infra-audit-logs
+    - name: plain-text-logs
       inputRefs:
+        - plain-text
+        - platform-legacy
         - infrastructure
         - audit
       outputRefs:
