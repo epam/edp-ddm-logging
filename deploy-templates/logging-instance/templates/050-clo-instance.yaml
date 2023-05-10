@@ -44,15 +44,13 @@ spec:
         platform/logging: 'true'
       replicas: 1
   collection:
-    logs:
-      fluentd:
-        resources:
-          limits:
-            cpu: '1'
-            memory: 1024Mi
-          requests:
-            cpu: 200m
-            memory: 1024Mi
-        tolerations:
-          - operator: Exists
-      type: fluentd
+    resources:
+      limits:
+        cpu: '1'
+        memory: 1024Mi
+      requests:
+        cpu: 200m
+        memory: 1024Mi
+    tolerations:
+      - operator: Exists
+    type: fluentd

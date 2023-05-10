@@ -8,12 +8,14 @@ spec:
     elasticsearch:
       structuredTypeKey: kubernetes.namespace_name
   pipelines:
-    - inputRefs:
+    - name: application-logs
+      inputRefs:
         - application
       outputRefs:
         - default
       parse: json
-    - inputRefs:
+    - name: infra-audit-logs
+      inputRefs:
         - infrastructure
         - audit
       outputRefs:
