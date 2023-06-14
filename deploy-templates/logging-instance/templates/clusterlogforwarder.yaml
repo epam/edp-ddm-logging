@@ -31,7 +31,6 @@ spec:
           - postgres-operator
           - redis-operator
           - smtp-server
-          - user-management
           - velero
   outputs:
     - elasticsearch:
