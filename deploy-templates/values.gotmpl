@@ -6,4 +6,5 @@ cluster_prefix: {{ exec "oc" (list "get" "infrastructure" "cluster" "--no-header
 cluster_zones: {{ "" | regexReplaceAll "'" (exec "oc" (list "get" "machine" "-n" "openshift-machine-api" "-l" "machine.openshift.io/cluster-api-machine-role=master" "--no-headers" "-o" "jsonpath='{.items[*].metadata.labels.machine\\.openshift\\.io/zone}'")) | splitList " " | uniq }}
 
 global:
+  imageRegistry: '{{ env "dockerProxyRegistry" }}'
   storageClass: {{ if eq $cloudProvider "AWS" }}"gp2"{{ else }}{{ env "platformStorageClass" }}{{ end }}

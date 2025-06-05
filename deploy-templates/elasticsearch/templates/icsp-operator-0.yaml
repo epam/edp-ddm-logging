@@ -1,0 +1,14 @@
+apiVersion: operator.openshift.io/v1alpha1
+kind: ImageContentSourcePolicy
+metadata:
+  labels:
+    operators.openshift.org/catalog: "true"
+  name: operator-0
+spec:
+  repositoryDigestMirrors:
+    - mirrors:
+        - "{{ .Values.global.imageRegistry }}/openshift-logging"
+      source: registry.redhat.io/openshift-logging
+    - mirrors:
+        - "{{ .Values.global.imageRegistry }}/openshift4"
+      source: registry.redhat.io/openshift4

@@ -42,6 +42,8 @@ spec:
           instanceType: m5.2xlarge
           metadata:
             creationTimestamp: null
+          metadataServiceOptions:
+            authentication: Required
           blockDevices:
             - ebs:
                 encrypted: true
